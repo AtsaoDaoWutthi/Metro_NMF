@@ -1,29 +1,42 @@
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import java.util.Random;
-import java.awt.Color;
 
 public class Scene extends JPanel implements Runnable {
+
     int width = 1080, height = 1080;
 
     Image[] metroPics = new Image[10];
 
-    int metroCount = 10;
-    Metro[] metros = new Metro[metroCount];
+    int metroCount;
+    Metro[] metros;
     Thread repaintThread;
 
-    public Scene() {
+    public Scene(int metroCount) {
+        this.metroCount = metroCount;
+        this.metros = new Metro[metroCount];
+
         for (int i = 0; i < 10; i++) {
-            metroPics[i] = new ImageIcon("images/" + (i + 1) + ".png").getImage();
+            metroPics[i] = new ImageIcon(
+                "images/" + (i + 1) + ".png"
+            ).getImage();
         }
 
         Random rand = new Random();
-        for (int i = 0; i < metroCount; i++) {
-            Image randomPic = metroPics[rand.nextInt(10)]; // สุ่มดึงรูป 1 รูปจาก Array
 
-            metros[i] = new Metro(width, height, randomPic); // ส่งรูปเข้าไปเก็บในอุกกาบาต
+        for (int i = 0; i < metroCount; i++) {
+            Image randomPic = metroPics[rand.nextInt(10)];
+
+            metros[i] = new Metro(
+                width,
+                height,
+                randomPic
+            );
+
             Thread t = new Thread(metros[i]);
             t.start();
         }
@@ -35,7 +48,9 @@ public class Scene extends JPanel implements Runnable {
     @Override
     public void run() {
         while (true) {
+            checkCollisions();
             repaint();
+
             try {
                 Thread.sleep(16);
             } catch (InterruptedException e) {
@@ -56,4 +71,32 @@ public class Scene extends JPanel implements Runnable {
             }
         }
     }
+
+    private void checkCollisions() {
+    for (int i = 0; i < metroCount; i++) {
+        Metro first = metros[i];
+
+        if (first == null || !first.alive) {
+            continue;
+        }
+
+        for (int j = i + 1; j < metroCount; j++) {
+            Metro second = metros[j];
+
+            if (second == null || !second.alive) {
+                continue;
+            }
+
+            boolean collision = first.x < second.x + second.size 
+            && first.x + first.size > second.x 
+            && first.y < second.y + second.size 
+            && first.y + first.size > second.y;
+
+            if (collision) {
+                second.alive = false;
+                break;
+            }
+        }
+    }
+}
 }
