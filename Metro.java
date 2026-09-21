@@ -1,15 +1,16 @@
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.Random;
 
 public class Metro implements Runnable {
+
     int x, y, dx, dy;
     int size = 40;
     int width, height;
     boolean alive = true;
-    Image myImage; 
+    Image myImage;
     Random random = new Random();
-
 
     public Metro(int width, int height, Image img) {
         this.myImage = img;
@@ -25,21 +26,23 @@ public class Metro implements Runnable {
     }
 
     public void move(int width, int height) {
-        if (!alive) return;
+        if (!alive) {
+            return;
+        }
 
         x += dx;
         y += dy;
 
-        if (x <= 0){
-            dx =  Math.abs(dx);
+        if (x <= 0) {
+            dx = Math.abs(dx);
         }
-        if (x >= width - size){
+        if (x >= width - size) {
             dx = -Math.abs(dx);
         }
-        if (y <= 0){
-            dy =  Math.abs(dy);
-        }              
-        if (y >= height - size){
+        if (y <= 0) {
+            dy = Math.abs(dy);
+        }
+        if (y >= height - size) {
             dy = -Math.abs(dy);
         }
     }
@@ -47,7 +50,7 @@ public class Metro implements Runnable {
     @Override
     public void run() {
         while (alive) {
-            move(1080,1080);
+            move(1080, 1080);
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
