@@ -1,6 +1,7 @@
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.Random;
+import javax.swing.ImageIcon;
 
 public class Metro implements Runnable {
     int x, y, dx, dy;
@@ -8,11 +9,17 @@ public class Metro implements Runnable {
     int width, height;
     boolean alive = true;
     Image myImage; 
+    Image bombImg;
+    boolean exploding = false;
+    double exploEndTime;
     Random random = new Random();
 
 
     public Metro(int width, int height, Image img) {
+        this.width = width;
+        this.height = height;
         this.myImage = img;
+        this.bombImg = new ImageIcon("images/bomb.gif").getImage();
         spawn(width, height);
     }
 
@@ -20,8 +27,8 @@ public class Metro implements Runnable {
         this.x = random.nextInt(Math.max(1, width - size));
         this.y = random.nextInt(Math.max(1, height - size));
 
-        this.dx = random.nextBoolean() ? 4 : -4;
-        this.dy = random.nextBoolean() ? 4 : -4;
+        this.dx = randomSpeed();
+        this.dy = randomSpeed();
     }
 
     public void move(int width, int height) {
@@ -46,8 +53,13 @@ public class Metro implements Runnable {
 
     @Override
     public void run() {
-        while (alive) {
-            move(1080,1080);
+        while (alive || exploding) {
+            if(alive){
+                move(width, height);
+            }
+            if(exploding && System.currentTimeMillis() > exploEndTime){
+                exploding = false;
+            }
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
@@ -57,8 +69,29 @@ public class Metro implements Runnable {
     }
 
     public void draw(Graphics g) {
-        if (alive && myImage != null) {
-            g.drawImage(myImage, x, y, size, size, null);
-        }
+       if(exploding && bombImg != null){
+        g.drawImage(bombImg, x, y, size, size, null);
+       }else if(alive && myImage != null){
+        g.drawImage(myImage, x, y, size,size, null);
+       }
+    }
+
+    public boolean isAlive(){
+        return alive;
+    }
+
+    public void explode(){
+        if(!alive) return;
+        alive = false;
+        exploding = true;
+        exploEndTime = System.currentTimeMillis() + 1000;
+    }
+    public boolean isExploding() {
+    return exploding;
+    }   
+
+    private int randomSpeed(){
+        int speed = 2 + random.nextInt(5);
+        return random.nextBoolean() ? speed : -speed;
     }
 }

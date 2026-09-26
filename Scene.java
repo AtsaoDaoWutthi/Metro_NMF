@@ -1,12 +1,13 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
+import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import java.util.Random;
-import java.awt.Color;
 
 public class Scene extends JPanel implements Runnable {
-    int width = 1080, height = 1080;
+    int width = 1080, height = 700;
 
     Image[] metroPics = new Image[10];
 
@@ -36,6 +37,7 @@ public class Scene extends JPanel implements Runnable {
     public void run() {
         while (true) {
             repaint();
+            checkCollisions();
             try {
                 Thread.sleep(16);
             } catch (InterruptedException e) {
@@ -51,8 +53,30 @@ public class Scene extends JPanel implements Runnable {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
         for (int i = 0; i < metroCount; i++) {
-            if (metros[i] != null) {
+            if (metros[i] != null && (metros[i].isAlive() || metros[i].isExploding())) {
                 metros[i].draw(g);
+            }
+        }
+    }
+
+    private void checkCollisions(){
+        for (int i = 0; i < metroCount; i++) {
+            if(!metros[i].isAlive()){
+                continue;
+            }
+
+            for (int j = i + 1; j < metroCount; j++) {
+                if(!metros[j].isAlive()){
+                    continue;
+                }
+
+                Rectangle first = new Rectangle(metros[i].x, metros[i].y, metros[i].size, metros[i].size);
+                Rectangle second = new Rectangle(metros[j].x, metros[j].y, metros[j].size, metros[j].size);
+                if(first.intersects(second)){
+                    System.out.println("ชนกัน: " + i + " กับ " + j);
+                    metros[i].explode();
+                    break;
+                }
             }
         }
     }

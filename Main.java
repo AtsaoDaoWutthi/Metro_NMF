@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 public class Main extends  JFrame{
     public Main(){
         setTitle("Metro BOOM!!");
-        setSize(1080,1080);
+        setSize(1080,700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
