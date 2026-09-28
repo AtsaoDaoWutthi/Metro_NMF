@@ -96,10 +96,10 @@ public class Scene extends JPanel implements Runnable {
 
         int remaining = 0;
         for (int i = 0; i < metroCount; i++) {
-            if (metros[i] != null && (metros[i].isAlive() || metros[i].isExploding())) {
+            if (metros[i].isAlive() || metros[i].isExploding()) {
                 metros[i].draw(g);
             }
-            if (metros[i] != null && metros[i].isAlive()) {
+            if (metros[i].isAlive()) {
                 remaining++;
             }
         }
