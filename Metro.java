@@ -15,6 +15,7 @@ public class Metro implements Runnable {
     Random random = new Random();
 
 
+    // สร้างอุกกาบาตหนึ่งลูก พร้อมกำหนดรูปและขอบเขตการเคลื่อนที่
     public Metro(int width, int height, Image img) {
         this.width = width;
         this.height = height;
@@ -23,6 +24,7 @@ public class Metro implements Runnable {
         spawn(width, height);
     }
 
+    // สุ่มตำแหน่งเริ่มต้นและความเร็วของอุกกาบาต
     public void spawn(int width, int height) {
         this.x = random.nextInt(Math.max(1, width - size));
         this.y = random.nextInt(Math.max(1, height - size));
@@ -31,6 +33,7 @@ public class Metro implements Runnable {
         this.dy = randomSpeed();
     }
 
+    // ขยับอุกกาบาต และทำให้เด้งกลับเมื่อชนขอบหน้าจอ
     public void move(int width, int height) {
         if (!alive) return;
 
@@ -51,6 +54,7 @@ public class Metro implements Runnable {
         }
     }
 
+    // ทำงานเบื้องหลัง คอยขยับอุกกาบาตและจัดการช่วงเวลาที่กำลังระเบิด
     @Override
     public void run() {
         while (alive || exploding) {
@@ -68,6 +72,7 @@ public class Metro implements Runnable {
         }
     }
 
+    // วาดรูปอุกกาบาต หรือรูปเอฟเฟกต์ระเบิดลงบนหน้าจอ
     public void draw(Graphics g) {
        if(exploding && bombImg != null){
         g.drawImage(bombImg, x, y, size, size, null);
@@ -76,20 +81,24 @@ public class Metro implements Runnable {
        }
     }
 
+    // เช็กว่าอุกกาบาตลูกนี้ยังเคลื่อนที่อยู่หรือไม่
     public boolean isAlive(){
         return alive;
     }
 
+    // เปลี่ยนสถานะอุกกาบาตให้หยุดเคลื่อนที่และแสดงภาพระเบิด
     public void explode(){
         if(!alive) return;
         alive = false;
         exploding = true;
         exploEndTime = System.currentTimeMillis() + 1000;
     }
+    // เช็กว่าตอนนี้อุกกาบาตกำลังแสดงภาพระเบิดอยู่หรือไม่
     public boolean isExploding() {
     return exploding;
     }   
 
+    // สุ่มความเร็วและทิศทางการเคลื่อนที่ของอุกกาบาต
     private int randomSpeed(){
         int speed = 2 + random.nextInt(5);
         return random.nextBoolean() ? speed : -speed;
