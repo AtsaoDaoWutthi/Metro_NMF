@@ -1,9 +1,9 @@
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class Scene extends JPanel implements Runnable {
+
     int width = 1080, height = 700;
 
     Image[] metroPics = new Image[10];
@@ -19,7 +20,6 @@ public class Scene extends JPanel implements Runnable {
     int metroCount;
     Metro[] metros;
     Thread repaintThread;
-    
 
     // เตรียมหน้าจอ ช่องกรอกจำนวน และปุ่มเริ่มเกม
     public Scene() {
@@ -40,7 +40,9 @@ public class Scene extends JPanel implements Runnable {
     private void startGame(String input) {
         try {
             metroCount = Integer.parseInt(input);
-            if (metroCount <= 0) throw new NumberFormatException();
+            if (metroCount <= 0) {
+                throw new NumberFormatException();
+            }
         } catch (NumberFormatException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Please enter an integer greater than 0.");
             return;
@@ -110,20 +112,25 @@ public class Scene extends JPanel implements Runnable {
     }
 
     // ตรวจดูว่าอุกกาบาตแต่ละลูกชนกันหรือไม่ ถ้าชนกันจะสั่งให้ระเบิด
-    private void checkCollisions(){
+    private void checkCollisions() {
         for (int i = 0; i < metroCount; i++) {
-            if(!metros[i].isAlive()){
+            // ถ้าตัวแรกไม่อยู่แล้ว ข้าม
+            if (!metros[i].isAlive()) {
                 continue;
             }
-
             for (int j = i + 1; j < metroCount; j++) {
-                if(!metros[j].isAlive()){
+                // ถ้าตัวที่สองไม่อยู่แล้ว ข้าม
+                if (!metros[j].isAlive()) {
                     continue;
                 }
 
-                Rectangle first = new Rectangle(metros[i].x, metros[i].y, metros[i].size, metros[i].size);
-                Rectangle second = new Rectangle(metros[j].x, metros[j].y, metros[j].size, metros[j].size);
-                if(first.intersects(second)){
+                // หาระยะห่างระหว่างตัวละคร
+                int dx = metros[i].x - metros[j].x;
+                int dy = metros[i].y - metros[j].y;
+
+                // ถ้าระยะห่างน้อยกว่าขนาด แสดงว่าชนกัน
+                if (Math.abs(dx) < (metros[i].size - 8)
+                        && Math.abs(dy) < (metros[i].size - 8)) {
                     System.out.println("ชนกัน: " + i + " กับ " + j);
                     metros[i].explode();
                     break;
